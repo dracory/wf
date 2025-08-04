@@ -1,5 +1,7 @@
 # WF (Workflow) Package
 
+![tests](https://github.com/dracory/wf/workflows/tests/badge.svg)
+
 ![DAG](./media/dag.svg)
 
 The wf package provides a flexible and extensible framework for defining
