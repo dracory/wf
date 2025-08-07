@@ -15,15 +15,19 @@ type stepImplementation struct {
 	state   StateInterface
 }
 
-// NewStep creates a new step with the given execution function and optional ID.
-func NewStep() StepInterface {
+// NewStep creates a new step with the given options
+func NewStep(opts ...func(Nameable)) StepInterface {
 	step := &stepImplementation{
+		id:    uid.HumanUid(),
+		name:  "",
 		data:  make(map[string]any),
 		state: NewState(),
 	}
 
-	step.SetID(uid.HumanUid())
-	step.SetName("")
+	// Apply all options
+	for _, opt := range opts {
+		opt(step) // This handles WithName
+	}
 
 	return step
 }

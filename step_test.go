@@ -6,9 +6,8 @@ import (
 )
 
 func Test_Step_Basic(t *testing.T) {
-	// Create a step
-	step := NewStep()
-	step.SetName("TestStep")
+	// Create a step with options
+	step := NewStep(WithName("TestStep"))
 
 	// Test basic properties
 	if step.GetName() != "TestStep" {

@@ -28,16 +28,22 @@ type Dag struct {
 	state StateInterface
 }
 
-// NewDag creates a new DAG
-func NewDag() DagInterface {
+// NewDag creates a new DAG with the given options
+func NewDag(opts ...func(Nameable)) DagInterface {
 	dag := &Dag{
+		id:               uid.HumanUid(),
+		name:             "New DAG",
 		runnableSequence: make([]string, 0),
 		runnables:        make(map[string]RunnableInterface),
 		dependencies:     make(map[string][]string),
 		state:            NewState(),
 	}
-	dag.SetName("New DAG")
-	dag.id = uid.HumanUid()
+
+	// Apply all options (WithName, etc.)
+	for _, opt := range opts {
+		opt(dag)
+	}
+
 	return dag
 }
 
