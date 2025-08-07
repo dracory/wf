@@ -29,7 +29,7 @@ type Dag struct {
 }
 
 // NewDag creates a new DAG with the given options
-func NewDag(opts ...func(Nameable)) DagInterface {
+func NewDag(opts ...interface{}) DagInterface {
 	dag := &Dag{
 		id:               uid.HumanUid(),
 		name:             "New DAG",
@@ -39,9 +39,14 @@ func NewDag(opts ...func(Nameable)) DagInterface {
 		state:            NewState(),
 	}
 
-	// Apply all options (WithName, etc.)
+	// Apply all options
 	for _, opt := range opts {
-		opt(dag)
+		switch o := opt.(type) {
+		case func(Nameable):
+			o(dag) // Handles WithName
+		case func(Identifiable):
+			o(dag) // Handles WithID
+		}
 	}
 
 	return dag

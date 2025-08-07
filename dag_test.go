@@ -8,11 +8,18 @@ import (
 
 func Test_Dag_Basic(t *testing.T) {
 	// Create a simple DAG with two steps
-	dag := NewDag()
-	step1 := NewStep()
-	step2 := NewStep()
-	step1.SetName("Step1")
-	step2.SetName("Step2")
+	dag := NewDag(
+		WithName("TestDAG"),
+		WithID("test-dag-1"),
+	)
+	step1 := NewStep(
+		WithName("Step1"),
+		WithID("step-1"),
+	)
+	step2 := NewStep(
+		WithName("Step2"),
+		WithID("step-2"),
+	)
 
 	// Set handlers for steps
 	step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
@@ -42,11 +49,18 @@ func Test_Dag_Basic(t *testing.T) {
 
 func Test_Dag_Remove(t *testing.T) {
 	// Create a DAG with steps
-	dag := NewDag()
-	step1 := NewStep()
-	step2 := NewStep()
-	step1.SetName("Step1")
-	step2.SetName("Step2")
+	dag := NewDag(
+		WithName("TestDAG"),
+		WithID("test-dag-2"),
+	)
+	step1 := NewStep(
+		WithName("Step1"),
+		WithID("step-1"),
+	)
+	step2 := NewStep(
+		WithName("Step2"),
+		WithID("step-2"),
+	)
 
 	// Set handlers for steps
 	step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
@@ -82,11 +96,18 @@ func Test_Dag_Remove(t *testing.T) {
 
 func Test_Dag_TopologicalSort(t *testing.T) {
 	// Create a DAG with a cycle
-	dag := NewDag()
-	step1 := NewStep()
-	step2 := NewStep()
-	step1.SetName("Step1")
-	step2.SetName("Step2")
+	dag := NewDag(
+		WithName("TestDAG"),
+		WithID("test-dag-sort"),
+	)
+	step1 := NewStep(
+		WithName("Step1"),
+		WithID("step-sort-1"),
+	)
+	step2 := NewStep(
+		WithName("Step2"),
+		WithID("step-sort-2"),
+	)
 
 	// Set handlers for steps
 	step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {

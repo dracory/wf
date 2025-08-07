@@ -16,7 +16,7 @@ type stepImplementation struct {
 }
 
 // NewStep creates a new step with the given options
-func NewStep(opts ...func(Nameable)) StepInterface {
+func NewStep(opts ...interface{}) StepInterface {
 	step := &stepImplementation{
 		id:    uid.HumanUid(),
 		name:  "",
@@ -26,7 +26,12 @@ func NewStep(opts ...func(Nameable)) StepInterface {
 
 	// Apply all options
 	for _, opt := range opts {
-		opt(step) // This handles WithName
+		switch o := opt.(type) {
+		case func(Nameable):
+			o(step) // Handles WithName
+		case func(Identifiable):
+			o(step) // Handles WithID
+		}
 	}
 
 	return step

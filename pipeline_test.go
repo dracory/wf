@@ -8,11 +8,18 @@ import (
 
 func Test_Pipeline_Basic(t *testing.T) {
 	// Create a simple pipeline with two steps
-	pipeline := NewPipeline()
-	step1 := NewStep()
-	step2 := NewStep()
-	step1.SetName("Step1")
-	step2.SetName("Step2")
+	pipeline := NewPipeline(
+		WithName("TestPipeline"),
+		WithID("test-pipeline-1"),
+	)
+	step1 := NewStep(
+		WithName("Step1"),
+		WithID("step-1"),
+	)
+	step2 := NewStep(
+		WithName("Step2"),
+		WithID("step-2"),
+	)
 
 	// Set handlers for steps
 	step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
@@ -40,11 +47,18 @@ func Test_Pipeline_Basic(t *testing.T) {
 
 func Test_Pipeline_Remove(t *testing.T) {
 	// Create a pipeline with steps
-	pipeline := NewPipeline()
-	step1 := NewStep()
-	step2 := NewStep()
-	step1.SetName("Step1")
-	step2.SetName("Step2")
+	pipeline := NewPipeline(
+		WithName("TestPipeline"),
+		WithID("test-pipeline-remove"),
+	)
+	step1 := NewStep(
+		WithName("Step1"),
+		WithID("step-remove-1"),
+	)
+	step2 := NewStep(
+		WithName("Step2"),
+		WithID("step-remove-2"),
+	)
 
 	// Set handlers for steps
 	step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
@@ -71,11 +85,18 @@ func Test_Pipeline_Remove(t *testing.T) {
 
 func Test_Pipeline_Execution(t *testing.T) {
 	// Create a pipeline with steps that modify data
-	pipeline := NewPipeline()
-	step1 := NewStep()
-	step2 := NewStep()
-	step1.SetName("Step1")
-	step2.SetName("Step2")
+	pipeline := NewPipeline(
+		WithName("TestPipeline"),
+		WithID("test-pipeline-exec"),
+	)
+	step1 := NewStep(
+		WithName("Step1"),
+		WithID("step-exec-1"),
+	)
+	step2 := NewStep(
+		WithName("Step2"),
+		WithID("step-exec-2"),
+	)
 
 	// Set handlers for steps
 	step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
@@ -104,8 +125,11 @@ func Test_Pipeline_Execution(t *testing.T) {
 }
 
 func Test_Pipeline_Empty(t *testing.T) {
-	// Create an empty pipeline
-	pipeline := NewPipeline()
+	// Create an empty pipeline with just a name and ID
+	pipeline := NewPipeline(
+		WithName("EmptyPipeline"),
+		WithID("test-pipeline-empty"),
+	)
 
 	// Test execution of empty pipeline
 	ctx := context.Background()
@@ -123,9 +147,14 @@ func Test_Pipeline_Empty(t *testing.T) {
 
 func Test_Pipeline_ErrorPropagation(t *testing.T) {
 	// Create a pipeline with a step that returns an error
-	pipeline := NewPipeline()
-	step1 := NewStep()
-	step1.SetName("Step1")
+	pipeline := NewPipeline(
+		WithName("ErrorPipeline"),
+		WithID("test-pipeline-error"),
+	)
+	step1 := NewStep(
+		WithName("Step1"),
+		WithID("step-error-1"),
+	)
 
 	// Set handler that returns an error
 	step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
@@ -147,13 +176,18 @@ func Test_Pipeline_ErrorPropagation(t *testing.T) {
 
 func Test_Pipeline_LargeSequence(t *testing.T) {
 	// Create a pipeline with 100 increment steps
-	pipeline := NewPipeline()
+	pipeline := NewPipeline(
+		WithName("LargeSequence"),
+		WithID("test-pipeline-large-seq"),
+	)
 	steps := make([]RunnableInterface, 100)
 
 	// Create and add steps
 	for i := range 100 {
-		step := NewStep()
-		step.SetName(fmt.Sprintf("Step%d", i))
+		step := NewStep(
+			WithName(fmt.Sprintf("Step%d", i)),
+			WithID(fmt.Sprintf("step-large-%03d", i)),
+		)
 		step.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
 			current, ok := data["counter"]
 			if !ok {

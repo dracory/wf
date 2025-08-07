@@ -17,15 +17,20 @@ type pipelineImplementation struct {
 }
 
 // NewPipeline creates a new pipeline with the given options
-func NewPipeline(opts ...func(Nameable)) PipelineInterface {
+func NewPipeline(opts ...interface{}) PipelineInterface {
 	p := &pipelineImplementation{
 		id:    uuid.New().String(),
 		state: NewState(),
 	}
 
-	// Apply all options (WithName, etc.)
+	// Apply all options
 	for _, opt := range opts {
-		opt(p)
+		switch o := opt.(type) {
+		case func(Nameable):
+			o(p) // Handles WithName
+		case func(Identifiable):
+			o(p) // Handles WithID
+		}
 	}
 
 	return p
