@@ -46,6 +46,8 @@ func NewDag(opts ...interface{}) DagInterface {
 			o(dag) // Handles WithName
 		case func(Identifiable):
 			o(dag) // Handles WithID
+		case func(RunnableAdder):
+			o(dag) // Handles WithRunnables
 		}
 	}
 

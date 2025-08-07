@@ -37,3 +37,16 @@ func WithHandler(handler func(context.Context, map[string]any) (context.Context,
 		s.SetHandler(handler)
 	}
 }
+
+// RunnableAdder is an interface that defines the RunnableAdd method
+// This is implemented by both Pipeline and Dag types
+type RunnableAdder interface {
+	RunnableAdd(node ...RunnableInterface)
+}
+
+// WithRunnables adds multiple runnable nodes to a Pipeline or Dag
+func WithRunnables(nodes ...RunnableInterface) func(RunnableAdder) {
+	return func(ra RunnableAdder) {
+		ra.RunnableAdd(nodes...)
+	}
+}

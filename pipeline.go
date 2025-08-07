@@ -20,6 +20,7 @@ type pipelineImplementation struct {
 func NewPipeline(opts ...interface{}) PipelineInterface {
 	p := &pipelineImplementation{
 		id:    uuid.New().String(),
+		nodes: make([]RunnableInterface, 0),
 		state: NewState(),
 	}
 
@@ -30,6 +31,8 @@ func NewPipeline(opts ...interface{}) PipelineInterface {
 			o(p) // Handles WithName
 		case func(Identifiable):
 			o(p) // Handles WithID
+		case func(RunnableAdder):
+			o(p) // Handles WithRunnables
 		}
 	}
 
