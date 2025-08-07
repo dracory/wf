@@ -9,56 +9,56 @@ import (
 
 // NewStepProcessOrder creates a step that processes the order
 func NewStepProcessOrder() wf.StepInterface {
-	step := wf.NewStep()
-	step.SetName("ProcessOrder")
-	step.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
-		stepsExecuted := data["stepsExecuted"].([]string)
-		data["stepsExecuted"] = append(stepsExecuted, "ProcessOrder")
-		return ctx, data, nil
-	})
-	return step
+	return wf.NewStep(
+		wf.WithName("ProcessOrder"),
+		wf.WithHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
+			stepsExecuted := data["stepsExecuted"].([]string)
+			data["stepsExecuted"] = append(stepsExecuted, "ProcessOrder")
+			return ctx, data, nil
+		}),
+	)
 }
 
 // NewStepApplyDiscount creates a step that applies a discount
 func NewStepApplyDiscount() wf.StepInterface {
-	step := wf.NewStep()
-	step.SetName("ApplyDiscount")
-	step.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
-		totalAmount := data["totalAmount"].(float64)
-		data["totalAmount"] = totalAmount * 0.9 // 10% discount
-		stepsExecuted := data["stepsExecuted"].([]string)
-		data["stepsExecuted"] = append(stepsExecuted, "ApplyDiscount")
-		return ctx, data, nil
-	})
-	return step
+	return wf.NewStep(
+		wf.WithName("ApplyDiscount"),
+		wf.WithHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
+			totalAmount := data["totalAmount"].(float64)
+			data["totalAmount"] = totalAmount * 0.9 // 10% discount
+			stepsExecuted := data["stepsExecuted"].([]string)
+			data["stepsExecuted"] = append(stepsExecuted, "ApplyDiscount")
+			return ctx, data, nil
+		}),
+	)
 }
 
 // NewStepAddShipping creates a step that adds shipping cost
 func NewStepAddShipping() wf.StepInterface {
-	step := wf.NewStep()
-	step.SetName("AddShipping")
-	step.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
-		totalAmount := data["totalAmount"].(float64)
-		data["totalAmount"] = totalAmount + 5.0 // Fixed shipping cost
-		stepsExecuted := data["stepsExecuted"].([]string)
-		data["stepsExecuted"] = append(stepsExecuted, "AddShipping")
-		return ctx, data, nil
-	})
-	return step
+	return wf.NewStep(
+		wf.WithName("AddShipping"),
+		wf.WithHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
+			totalAmount := data["totalAmount"].(float64)
+			data["totalAmount"] = totalAmount + 5.0 // Fixed shipping cost
+			stepsExecuted := data["stepsExecuted"].([]string)
+			data["stepsExecuted"] = append(stepsExecuted, "AddShipping")
+			return ctx, data, nil
+		}),
+	)
 }
 
 // NewStepCalculateTax creates a step that calculates tax
 func NewStepCalculateTax() wf.StepInterface {
-	step := wf.NewStep()
-	step.SetName("CalculateTax")
-	step.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
-		totalAmount := data["totalAmount"].(float64)
-		data["totalAmount"] = totalAmount * 1.2 // 20% tax
-		stepsExecuted := data["stepsExecuted"].([]string)
-		data["stepsExecuted"] = append(stepsExecuted, "CalculateTax")
-		return ctx, data, nil
-	})
-	return step
+	return wf.NewStep(
+		wf.WithName("CalculateTax"),
+		wf.WithHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
+			totalAmount := data["totalAmount"].(float64)
+			data["totalAmount"] = totalAmount * 1.2 // 20% tax
+			stepsExecuted := data["stepsExecuted"].([]string)
+			data["stepsExecuted"] = append(stepsExecuted, "CalculateTax")
+			return ctx, data, nil
+		}),
+	)
 }
 
 // NewConditionalDag creates a DAG with conditional logic
@@ -76,8 +76,9 @@ func NewStepCalculateTax() wf.StepInterface {
 // - dag: The DAG with conditional logic
 // - error: Error if any
 func NewConditionalDag(orderType string, totalAmount float64) (wf.DagInterface, error) {
-	dag := wf.NewDag()
-	dag.SetName("Conditional Logic Example DAG")
+	dag := wf.NewDag(
+		wf.WithName("Conditional Order Processing"),
+	)
 
 	// Create common steps
 	processOrder := NewStepProcessOrder()
@@ -96,8 +97,28 @@ func NewConditionalDag(orderType string, totalAmount float64) (wf.DagInterface, 
 		dag.RunnableAdd(addShipping)
 		dag.DependencyAdd(addShipping, applyDiscount)
 		dag.DependencyAdd(calculateTax, addShipping)
-	} else {
+	} else if orderType == "digital" || orderType == "subscription" {
 		dag.DependencyAdd(calculateTax, applyDiscount)
+	} else {
+		return nil, errors.New("invalid order type")
+	}
+
+	// Initialize the data in the context that will be passed to Run
+	initialData := map[string]any{
+		"totalAmount":   totalAmount,
+		"stepsExecuted": []string{},
+	}
+
+	// Store initial data in the DAG's state
+	if state := dag.GetState(); state != nil {
+		stateData := state.GetData()
+		if stateData == nil {
+			stateData = make(map[string]any)
+		}
+		for k, v := range initialData {
+			stateData[k] = v
+		}
+		state.SetData(stateData)
 	}
 
 	return dag, nil
