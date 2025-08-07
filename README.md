@@ -23,6 +23,7 @@ with dependencies between automated tasks.
 
 ## Key Features
 
+- **Flexible Initialization**: Initialize workflows with options like `WithName`, `WithID`, and `WithRunnables`
 - **Automated Task Execution**: Define and execute tasks programmatically without manual intervention
 - **Simple Step Definitions**: Easily define individual operations as reusable steps
 - **Organized Pipelines**: Group related operations into logical pipelines for better maintainability
@@ -87,17 +88,18 @@ step.SetHandler(func(ctx context.Context, data map[string]any) (context.Context,
 ### Creating a Pipeline
 
 ```go
-// Create steps for a pipeline
-step1 := NewStep()
-step1.SetName("Process Data")
-step1.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
-    data["processed"] = true
-    return ctx, data, nil
-})
+// Create steps for a pipeline using options
+step1 := NewStep(
+    WithName("Process Data"),
+    WithHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
+        data["processed"] = true
+        return ctx, data, nil
+    }),
+)
 
-step2 := NewStep()
-step2.SetName("Validate Data")
-step2.SetHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
+step2 := NewStep(
+    WithName("Validate Data"),
+    WithHandler(func(ctx context.Context, data map[string]any) (context.Context, map[string]any, error) {
     if !data["processed"].(bool) {
         return ctx, data, errors.New("data not processed")
     }
@@ -105,25 +107,28 @@ step2.SetHandler(func(ctx context.Context, data map[string]any) (context.Context
 })
 
 // Create a pipeline
-pipeline := NewPipeline()
-pipeline.SetName("Data Processing Pipeline")
+pipeline := NewPipeline(
+    WithName("Data Processing Pipeline"),
+    WithRunnables(step1, step2), // Add steps during creation
+)
 
-// Add steps to pipeline
-pipeline.RunnableAdd(step1, step2)
+// Or add steps later
+// pipeline.RunnableAdd(step1, step2)
 ```
 
 ### Creating a DAG
 
 ```go
-// Create a DAG
-dag := NewDag()
-dag.SetName("My DAG")
+// Create a DAG with options and dependencies
+dag := NewDag(
+    WithName("My DAG"),
+    WithRunnables(step1, step2), // Add steps during creation
+    WithDependency(step2, step1), // step2 depends on step1
+)
 
-// Add steps
-dag.RunnableAdd(step1, step2)
-
-// Add dependencies
-dag.DependencyAdd(step2, step1) // step2 depends on step1
+// Alternative way to add steps and dependencies later
+// dag.RunnableAdd(step1, step2)
+// dag.DependencyAdd(step2, step1)
 ```
 
 ### Using a Pipeline in a DAG
@@ -132,23 +137,22 @@ dag.DependencyAdd(step2, step1) // step2 depends on step1
 
 
 ```go
-// Create a pipeline with steps
-pipeline := NewPipeline()
-pipeline.SetName("Data Processing Pipeline")
+// Create a pipeline with steps using options
+pipeline := NewPipeline(
+    WithName("Data Processing Pipeline"),
+    WithRunnables(step1, step2),
+)
 
-// Add steps to pipeline
-pipeline.RunnableAdd(step1, step2)
+// Create a DAG with a pipeline and dependencies
+dag := NewDag(
+    WithName("My DAG"),
+    WithRunnables(pipeline, step3), // Add all nodes during creation
+    WithDependency(step3, pipeline), // step3 depends on pipeline
+)
 
-// Create a DAG
-dag := NewDag()
-dag.SetName("My DAG")
-
-// Add pipeline to DAG
-dag.RunnableAdd(pipeline)
-
-// Add other steps that depend on the pipeline
-dag.RunnableAdd(step3)
-dag.DependencyAdd(step3, pipeline)
+// Alternative way to add nodes and dependencies later
+// dag.RunnableAdd(pipeline, step3)
+// dag.DependencyAdd(step3, pipeline)
 ```
 
 ### Executing Steps

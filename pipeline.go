@@ -168,8 +168,13 @@ func (p *pipelineImplementation) SetState(state StateInterface) {
 	p.state = state
 }
 
-func (p *pipelineImplementation) RunnableAdd(node ...RunnableInterface) {
-	p.nodes = append(p.nodes, node...)
+func (p *pipelineImplementation) RunnableAdd(nodes ...RunnableInterface) {
+	// Filter out nil nodes
+	for _, node := range nodes {
+		if node != nil {
+			p.nodes = append(p.nodes, node)
+		}
+	}
 }
 
 func (p *pipelineImplementation) RunnableRemove(node RunnableInterface) bool {

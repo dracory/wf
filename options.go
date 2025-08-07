@@ -39,14 +39,56 @@ func WithHandler(handler func(context.Context, map[string]any) (context.Context,
 }
 
 // RunnableAdder is an interface that defines the RunnableAdd method
-// This is implemented by both Pipeline and Dag types
+// RunnableAdder is an interface for types that can add runnable nodes
 type RunnableAdder interface {
 	RunnableAdd(node ...RunnableInterface)
 }
 
-// WithRunnables adds multiple runnable nodes to a Pipeline or Dag
+// DependencyAdder is an interface for types that can add dependencies between nodes
+type DependencyAdder interface {
+	DependencyAdd(dependent RunnableInterface, dependency ...RunnableInterface)
+}
+
+// WithRunnables adds multiple runnable nodes to a Pipeline or Dag.
+// Nil nodes are filtered out and not added.
 func WithRunnables(nodes ...RunnableInterface) func(RunnableAdder) {
 	return func(ra RunnableAdder) {
-		ra.RunnableAdd(nodes...)
+		// Filter out nil nodes
+		var validNodes []RunnableInterface
+		for _, node := range nodes {
+			if node != nil {
+				validNodes = append(validNodes, node)
+			}
+		}
+		if len(validNodes) > 0 {
+			ra.RunnableAdd(validNodes...)
+		}
+	}
+}
+
+// WithDependency adds a dependency between nodes in a DAG.
+// The dependent node will only execute after all dependency nodes have completed successfully.
+// This can be used to create a fluent API when building DAGs.
+//
+// Example:
+//   dag := NewDag(
+//       WithName("My DAG"),
+//       WithRunnables(step1, step2, step3),
+//       WithDependency(step2, step1),  // step2 depends on step1
+//       WithDependency(step3, step2),  // step3 depends on step2
+//   )
+func WithDependency(dependent RunnableInterface, dependencies ...RunnableInterface) func(DependencyAdder) {
+	return func(da DependencyAdder) {
+		if dependent != nil && len(dependencies) > 0 {
+			var validDeps []RunnableInterface
+			for _, dep := range dependencies {
+				if dep != nil {
+					validDeps = append(validDeps, dep)
+				}
+			}
+			if len(validDeps) > 0 {
+				da.DependencyAdd(dependent, validDeps...)
+			}
+		}
 	}
 }

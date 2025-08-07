@@ -48,6 +48,8 @@ func NewDag(opts ...interface{}) DagInterface {
 			o(dag) // Handles WithID
 		case func(RunnableAdder):
 			o(dag) // Handles WithRunnables
+		case func(DependencyAdder):
+			o(dag) // Handles WithDependency
 		}
 	}
 
