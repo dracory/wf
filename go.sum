@@ -1,5 +1,5 @@
-github.com/dracory/base v0.25.0 h1:qug9g1rMwVBC4MWyAtT0VYv7LU4hYqLOUEKqQv9X3+U=
-github.com/dracory/base v0.25.0/go.mod h1:0jMi6A9DLZwKK9q+7lw4CMS4mBmYJ8U5XKeeFt1SrZc=
+github.com/dracory/arr v0.2.0 h1:7vzKP988Yrcmqqol4qy+DLM1MFFNTNztwo6sJos3/Xo=
+github.com/dracory/arr v0.2.0/go.mod h1:M9Hdk7l+jhewLVCEiDyN+j0+2GkjksqrfNqtE1Cxbek=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gouniverse/uid v1.5.0 h1:evyGegnY7+KeYirDhJntI9xmODf8jPMQw8DlMpQIPnM=

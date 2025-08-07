@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/dracory/base/arr"
+	"github.com/dracory/arr"
 	"github.com/google/uuid"
 )
 
