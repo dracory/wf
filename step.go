@@ -31,6 +31,8 @@ func NewStep(opts ...interface{}) StepInterface {
 			o(step) // Handles WithName
 		case func(Identifiable):
 			o(step) // Handles WithID
+		case func(StepInterface):
+			o(step) // Handles WithHandler and other Step-specific options
 		}
 	}
 

@@ -1,5 +1,7 @@
 package wf
 
+import "context"
+
 // Nameable is an interface for types that can have a name
 type Nameable interface {
 	SetName(name string)
@@ -21,5 +23,17 @@ func WithName(name string) func(Nameable) {
 func WithID(id string) func(Identifiable) {
 	return func(i Identifiable) {
 		i.SetID(id)
+	}
+}
+
+// StepOption is a function that configures a Step
+// This is a type alias for backward compatibility
+// Deprecated: Use functional options directly instead
+type StepOption = func(StepInterface)
+
+// WithHandler sets the handler function for a step
+func WithHandler(handler func(context.Context, map[string]any) (context.Context, map[string]any, error)) func(StepInterface) {
+	return func(s StepInterface) {
+		s.SetHandler(handler)
 	}
 }
