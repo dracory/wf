@@ -178,11 +178,11 @@ This is particularly useful for long-running workflows that may need to be
 paused, saved, and resumed later.
 
 ```go
-// Create a workflow
-dag := NewDag()
-dag.SetName("My Workflow")
-
-// Add steps and dependencies...
+// Create a workflow with options
+dag := NewDag(
+    WithName("My Workflow"),
+    // Add steps and dependencies here
+)
 
 // Start workflow
 ctx := context.Background()
@@ -201,14 +201,16 @@ if err != nil {
     // Handle error
 }
 
-// Create new workflow instance
-newDag := NewDag()
-
-// Load saved state
+// Create new workflow instance with saved state
 newState := NewState()
 if err := newState.FromJSON(stateJSON); err != nil {
     // Handle error
 }
+
+newDag := NewDag(
+    WithName("My Workflow"),
+    // Re-add any steps and dependencies here
+)
 newDag.SetState(newState)
 
 // Resume workflow
