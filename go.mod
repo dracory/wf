@@ -4,8 +4,8 @@ go 1.24.5
 
 require (
 	github.com/dracory/arr v0.2.0
+	github.com/dracory/uid v1.8.0
 	github.com/google/uuid v1.6.0
-	github.com/gouniverse/uid v1.5.0
 )
 
 require (

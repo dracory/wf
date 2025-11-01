@@ -5,7 +5,7 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/gouniverse/uid"
+	"github.com/dracory/uid"
 )
 
 type Dag struct {

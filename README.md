@@ -277,7 +277,7 @@ The package includes comprehensive tests that verify:
 
 ## Dependencies
 
-- `github.com/gouniverse/uid`: For generating unique IDs
+- `github.com/dracory/uid`: For generating unique IDs
 
 ## Best Practices
 
